@@ -25,7 +25,7 @@ mystr2 = ''
 mystr = mystr.capitalize()
 
 # Step2 - Splitting input string into sentences using regex (take substr before :.!?)
-for sentence in re.split(r'(?<=[:.!?])', mystr):
+for sentence in re.findall(r'[^.?!:]+[.?!:]+', mystr):
     # search for the first word in a sentence using regex, exclude None to avoid exceptions if empty sentence
     if (first_word := re.search(r'(\w+)', sentence)) is not None:
         # On success, take group() value from the match and replace it in text with capitalized one
