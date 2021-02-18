@@ -79,8 +79,7 @@ class CreateNews(CreateObjectDynamic):
 
     def prepare_output(self):
         news_output = (
-            f"""{self.args[1]}, {self.args[2]}\n"""
-            f"""{self.args[3]}""")
+            f"""{self.args[1]}\n{self.args[2]}, {self.args[3]}""")
         return news_output
 
 
