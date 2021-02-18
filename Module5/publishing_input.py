@@ -110,8 +110,7 @@ class CreatePrivateAd(CreateObjectDynamic):
 
     def prepare_output(self):
         ad_output = (
-            f"""{self.args[1]}, {self.args[2]}"""
-            f"""\n{self.args[3]}""")
+            f"""{self.args[1]}\n{self.args[2]}, {self.args[3]}""")
         return ad_output
 
 
