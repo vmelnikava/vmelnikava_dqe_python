@@ -6,6 +6,7 @@ type_dict = {'1': ('News', 'text', 'city', 'publish_date'),
              '2': ('PrivateAd', 'text', 'exp_date', 'days_left'),
              '3': ('Horoscope', 'period', 'zodiac sign', 'prediction', 'from_date', 'to_date')}
 
+default_output_path = 'D:\\Python_DQE\\Module6\\files'
 
 class CreateObjectDynamic:
 
@@ -49,9 +50,9 @@ class CreateObjectDynamic:
     def publish(self, p_output):
         my_str1 = self.__format_output()
         my_str2 = f"------------------------------\n"
-        with open("newsfeed.txt", 'a+') as f:
+        with open(rf"{default_output_path}\\" + "newsfeed_input.txt", "a+") as f:
             f.write(f"""{my_str1}\n{p_output}\n{my_str2}\n\n""")
-        print(f"\nLog: Successfully published ({self.args[0]})!\n")
+        print(f"Log: Successfully published ({self.args[0]})!\n")
 
 
 class CreateNews(CreateObjectDynamic):
@@ -69,6 +70,13 @@ class CreateNews(CreateObjectDynamic):
         while not _is_valid_text(p2_value):
             p2_value = input(f"\nEnter {args[2]} for {args[0]}:")
         print('\nLog: Calculating Publish Date...')
+        p3_value = cls.calc_publish_date()
+        return cls(args[0], p1_value, p2_value, p3_value)
+
+    @classmethod
+    def get_input_batch(cls, *args):
+        p1_value = args[1]
+        p2_value = args[2]
         p3_value = cls.calc_publish_date()
         return cls(args[0], p1_value, p2_value, p3_value)
 
@@ -100,6 +108,15 @@ class CreatePrivateAd(CreateObjectDynamic):
         p3_value = str(cls.calc_days_left(p2_value)) + ' days left'
         print('\nLog: Calculating Days Left...')
         p2_value = 'Actual until: ' + p2_value
+        return cls(args[0], p1_value, p2_value, p3_value)
+
+    @classmethod
+    def get_input_batch(cls, *args):
+        p1_value = args[1]
+        p2_value = args[2]
+        p3_value = str(cls.calc_days_left(p2_value)) + ' days left'
+        p2_value = 'Actual until: ' + p2_value
+        # print('\nLog: Calculating Days Left...')
         return cls(args[0], p1_value, p2_value, p3_value)
 
     @staticmethod
@@ -138,6 +155,18 @@ class CreateHoroscope(CreateObjectDynamic):
         return cls(args[0], p1_value.capitalize(), str(p2_value).capitalize(), str(p3_value).capitalize(),
                    p4_value, p5_value)
 
+    @classmethod
+    def get_input_batch(cls, *args):
+        p1_value = args[1]
+        p2_value = args[2]
+        p3_value = args[3]
+        p4_value = cls.calc_from_date()
+        p5_value = cls.calc_to_date(p1_value, p4_value)
+        p4_value = p4_value.strftime('%b %d')
+        p5_value = p5_value.strftime('%b %d')
+        return cls(args[0], p1_value.capitalize(), str(p2_value).capitalize(), str(p3_value).capitalize(),
+                   p4_value, p5_value)
+
     @staticmethod
     def _is_valid_period(p_period):
         if not (p_period in ('daily', 'weekly', 'monthly')):
@@ -159,9 +188,9 @@ class CreateHoroscope(CreateObjectDynamic):
         return delta_dict[period]
 
     def prepare_output(self):
-        arg3 = '\n'.join(line.strip() for line in re.findall(r'.{1,30}(?:\s+|$)', self.args[3]))
+        # arg3 = '\n'.join(line.strip() for line in re.findall(r'.{1,30}(?:\s+|$)', self.args[3]))
         horoscope_output = (
-            f"""{self.args[2]} {self.args[1]} Horoscope\n{self.args[4]} - {self.args[5]}\n{arg3}""")
+            f"""{self.args[2]} {self.args[1]} Horoscope\n{self.args[4]} - {self.args[5]}\n{self.args[3]}""")
         return horoscope_output
 
 
@@ -197,7 +226,7 @@ def proceed():
     if question.upper() == 'Y':
         main()
     elif question.upper() == 'N':
-        good_bye()
+        pass
     else:
         print('Incorrect input. Please try again.')
         proceed()
@@ -215,4 +244,5 @@ def main():
     proceed()
 
 
-main()
+if __name__ == "__main__":
+    main()
