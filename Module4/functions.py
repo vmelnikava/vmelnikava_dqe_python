@@ -6,7 +6,7 @@ import string as s
 
 
 def find_sentence(p_input_str):
-    return re.findall(r'[^.?!:]+[.?!:]+', p_input_str)
+    return re.findall(r'[^.?!\n\r]*[.!\-?\n\r]*', p_input_str)
 
 
 def find_first_word(p_sentence):
@@ -14,14 +14,15 @@ def find_first_word(p_sentence):
 
 
 def capitalize_sentence(p_sentence, p_word):
-    return p_sentence.replace(p_word, p_word.capitalize())
+    return p_sentence.replace(p_word, p_word.capitalize(), 1)
 
 
 def normalize(input_str):
     nmlz_str = ''
     input_str = input_str.capitalize()
     for item in find_sentence(input_str):
-        nmlz_str += capitalize_sentence(item, find_first_word(item))
+        if item:
+            nmlz_str += capitalize_sentence(item, find_first_word(item))
     return nmlz_str
 
 
@@ -98,26 +99,29 @@ def create_common_dict(p_list):
                     insert_into_dict(dict_final, key, d[dict_with_max_key], dict_with_max_key)
     return dict_final
 
-# ---------------- HOME TASK 3 MAIN CODE ----------------
-
-
 str1 = "my name IS VOLHA, last name is Melnikava   .    and i live in MINSK, thank you!! how are YOU? where are yoU????"
-print('Input string:\n', str1)
 
-str2 = normalize(str1)
-print('Normalized string:\n', str2)
+def main():
+    # ---------------- HOME TASK 3 MAIN CODE ----------------
+    print('Input string:\n', str1)
 
-str3 = last_words(str2, '!!')
-print('String updated with last words:\n', str3)
+    str2 = normalize(str1)
+    print('Normalized string:\n', str2)
 
-str4 = replace_word(str3, 'volha', 'Denis')
-print('String with replaced word:\n', str4)
+    str3 = last_words(str2, '!!')
+    print('String updated with last words:\n', str3)
 
-print('Number of whitespaces:\n', count_whitespaces(str1))
+    str4 = replace_word(str3, 'volha', 'Denis')
+    print('String with replaced word:\n', str4)
 
-# ---------------- HOME TASK 2 MAIN CODE ----------------
-generated_list = generate_list_dict(rand_num(2, 10))
-print('Generated list of dictionaries:\n', generated_list)
+    print('Number of whitespaces:\n', count_whitespaces(str1))
 
-common_dict = create_common_dict(generated_list)
-print('Common Dictionary:', common_dict)
+    # ---------------- HOME TASK 2 MAIN CODE ----------------
+    generated_list = generate_list_dict(rand_num(2, 10))
+    print('Generated list of dictionaries:\n', generated_list)
+
+    common_dict = create_common_dict(generated_list)
+    print('Common Dictionary:', common_dict)
+
+if __name__ == "__main__":
+    main()
