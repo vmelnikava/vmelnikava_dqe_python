@@ -1,3 +1,0 @@
-"News": "text value" "city value"
-"PrivateAd": "text value" "02/02/2022"
-"Horoscope": "weekly", "libra", "text"
