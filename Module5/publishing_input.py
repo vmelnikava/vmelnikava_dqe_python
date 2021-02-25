@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 import calendar
-import re
 
 type_dict = {'1': ('News', 'text', 'city', 'publish_date'),
              '2': ('PrivateAd', 'text', 'exp_date', 'days_left'),
              '3': ('Horoscope', 'period', 'zodiac sign', 'prediction', 'from_date', 'to_date')}
 
 default_output_path = 'D:\\Python_DQE\\Module6\\files'
+output_file_name = 'newsfeed_input.txt'
 
 class CreateObjectDynamic:
 
@@ -50,7 +50,7 @@ class CreateObjectDynamic:
     def publish(self, p_output):
         my_str1 = self.__format_output()
         my_str2 = f"------------------------------\n"
-        with open(rf"{default_output_path}\\" + "newsfeed_input.txt", "a+") as f:
+        with open(rf"{default_output_path}\\" + output_file_name, "a+") as f:
             f.write(f"""{my_str1}\n{p_output}\n{my_str2}\n\n""")
         print(f"Log: Successfully published ({self.args[0]})!\n")
 
