@@ -1,6 +1,6 @@
 import sys
-sys.path.append('D:\\Python_DQE\\Module5')
 sys.path.append('D:\\Python_DQE\\Module4')
+sys.path.append('D:\\Python_DQE\\Module5')
 sys.path.append('D:\\Python_DQE\\Module7')
 import publishing_input as pi
 import process_batch as pb
