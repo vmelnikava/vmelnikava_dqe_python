@@ -70,7 +70,6 @@ def main(p_path, p_file_name):
     global input_file, file_path
     file_path = p_path
     input_file = (f'{p_path}\\' + p_file_name)
-    print(input_file)
     list_of_words = get_words()
     word_count = get_count_words(list_of_words)
     write_csv_words(word_count)
