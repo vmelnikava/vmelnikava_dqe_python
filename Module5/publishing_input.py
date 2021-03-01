@@ -52,7 +52,7 @@ class CreateObjectDynamic:
         my_str2 = f"------------------------------\n"
         with open(rf"{default_output_path}\\" + output_file_name, "a+") as f:
             f.write(f"""{my_str1}\n{p_output}\n{my_str2}\n\n""")
-        print(f"Log: Successfully published ({self.args[0]})!\n")
+        print(f"Log: successfully published ({self.args[0]})!\n")
 
 
 class CreateNews(CreateObjectDynamic):
@@ -79,6 +79,14 @@ class CreateNews(CreateObjectDynamic):
         p2_value = args[2]
         p3_value = cls.calc_publish_date()
         return cls(args[0], p1_value, p2_value, p3_value)
+
+    @classmethod
+    def get_input_json(cls, *args):
+        if _is_valid_text(args[1]) and _is_valid_text(args[2]):
+            return cls.get_input_batch(*args)
+        else:
+            print('\nLog: one of parameters is empty, publishing was stopped')
+            exit(1)
 
     @staticmethod
     def calc_publish_date():
@@ -118,6 +126,14 @@ class CreatePrivateAd(CreateObjectDynamic):
         p2_value = 'Actual until: ' + p2_value
         # print('\nLog: Calculating Days Left...')
         return cls(args[0], p1_value, p2_value, p3_value)
+
+    @classmethod
+    def get_input_json(cls, *args):
+        if _is_valid_text(args[1]) and _is_valid_date(args[2]):
+            return cls.get_input_batch(*args)
+        else:
+            print('\nLog: one of parameters failed validation, publishing was stopped')
+            exit(1)
 
     @staticmethod
     def calc_days_left(p_exp_date):
@@ -166,6 +182,14 @@ class CreateHoroscope(CreateObjectDynamic):
         p5_value = p5_value.strftime('%b %d')
         return cls(args[0], p1_value.capitalize(), str(p2_value).capitalize(), str(p3_value).capitalize(),
                    p4_value, p5_value)
+
+    @classmethod
+    def get_input_json(cls, *args):
+        if cls._is_valid_period(args[1]) and _is_valid_text(args[2]) and _is_valid_text(args[3]):
+            return cls.get_input_batch(*args)
+        else:
+            print('\nLog: one of parameters failed validation, publishing was stopped')
+            exit(1)
 
     @staticmethod
     def _is_valid_period(p_period):
