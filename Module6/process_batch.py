@@ -13,7 +13,6 @@ import re
 import os
 import publishing_input as pi
 
-
 default_input_path = 'D:\\Python_DQE\\Module6\\files'
 input_file_name = 'batch_input.txt'
 
@@ -30,7 +29,10 @@ def search_file(p_path):
 
 
 def get_path():
-    return input('Enter a path to file or leave it empty for default path:\n')
+    input_path = input('Enter a path to file or leave it empty for default path:\n')
+    if not input_path:
+        input_path = default_input_path
+    return input_path
 
 
 def parse_batch(p_input_data):
@@ -52,22 +54,20 @@ def parse_batch(p_input_data):
         new_obj.publish(new_obj.prepare_output())
 
 
-def delete_file(p_path):
+def delete_file(p_path, p_file_name):
     print('Log: start deleting input file..')
     try:
-        os.remove(rf"{p_path}\\" + f"{input_file_name}")
+        os.remove(rf"{p_path}\\" + f"{p_file_name}")
     except IOError:
         print('EXCEPTION: failed to delete the file')
     print('Log: input file has been deleted')
 
 
 def main():
-    input_path = get_path()
-    if not input_path:
-        input_path = default_input_path
-    data = search_file(input_path)
+    batch_path = get_path()
+    data = search_file(batch_path)
     parse_batch(data)
-    delete_file(input_path)
+    delete_file(batch_path, input_file_name)
 
 
 if __name__ == "__main__":
