@@ -1,0 +1,18 @@
+[
+  {
+    "type": "News",
+    "text": "crwgre",
+    "city": "JSON CITY"
+    },
+    {
+    "type": "PrivateAd",
+    "text": "JSON dfgd dfgd fgdf",
+    "expiration date": "02/02/2022"
+    },
+    {
+    "type": "Horoscope",
+    "period": "weekly",
+    "zodiac sign": "librasJSON",
+    "prediction": "JSON for prediction from VOlha"
+    }
+]
