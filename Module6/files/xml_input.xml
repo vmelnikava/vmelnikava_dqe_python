@@ -1,0 +1,24 @@
+<Publishing>
+    <News>
+        <text>Las Vegas Sands Corp., the upscale resort and casino company founded by the late Sheldon Adelson, is leaving its namesake city and selling its two Nevada properties in a $6.25 billion deal.</text>
+        <city>LAS VEGAS</city>
+    </News>
+    <PrivateAd>
+        <text>xml: text for private AD from VOLHA 2! HELLO VOLHA!</text>
+        <expiration_date>01/01/2022</expiration_date>
+    </PrivateAd>
+    <Horoscope>
+        <period>daily</period>
+        <zodiac_sign>Libra</zodiac_sign>
+        <prediction>Thursday’s skies feature positive cosmic opportunities, libra. communicator mercury spends the day in a pleasant union larger-than-life jupiter, helping imbue a sense of optimism and faith into creative projects or romantic undertaking.</prediction>
+    </Horoscope>
+    <PrivateAd>
+      <text>xml text for PRIVATE AD FRom VOLha 3! HI VOLHA!??</text>
+      <expiration_date>01/11/2021</expiration_date>
+    </PrivateAd>
+    <Horoscope>
+        <period>weekly</period>
+        <zodiac_sign>scoRPIO</zodiac_sign>
+        <prediction>Be careful that you aren't manipulating a romantic situation so your partner loses any power, scorpio.</prediction>
+    </Horoscope>
+</Publishing>
