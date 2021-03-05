@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import calendar
+import os
 
 type_dict = {'1': ('News', 'text', 'city', 'publish_date'),
              '2': ('PrivateAd', 'text', 'exp_date', 'days_left'),
@@ -7,6 +8,7 @@ type_dict = {'1': ('News', 'text', 'city', 'publish_date'),
 
 default_output_path = 'D:\\Python_DQE\\Module6\\files'
 output_file_name = 'newsfeed_input.txt'
+default_file_path = 'D:\\Python_DQE\\Module6\\files'
 
 class CreateObjectDynamic:
 
@@ -81,12 +83,13 @@ class CreateNews(CreateObjectDynamic):
         return cls(args[0], p1_value, p2_value, p3_value)
 
     @classmethod
-    def get_input_json(cls, *args):
+    def get_input_json_xml(cls, *args):
         if _is_valid_text(args[1]) and _is_valid_text(args[2]):
             return cls.get_input_batch(*args)
         else:
             print('\nLog: one of parameters is empty, publishing was stopped')
             exit(1)
+
 
     @staticmethod
     def calc_publish_date():
@@ -128,12 +131,13 @@ class CreatePrivateAd(CreateObjectDynamic):
         return cls(args[0], p1_value, p2_value, p3_value)
 
     @classmethod
-    def get_input_json(cls, *args):
+    def get_input_json_xml(cls, *args):
         if _is_valid_text(args[1]) and _is_valid_date(args[2]):
             return cls.get_input_batch(*args)
         else:
             print('\nLog: one of parameters failed validation, publishing was stopped')
             exit(1)
+
 
     @staticmethod
     def calc_days_left(p_exp_date):
@@ -184,12 +188,13 @@ class CreateHoroscope(CreateObjectDynamic):
                    p4_value, p5_value)
 
     @classmethod
-    def get_input_json(cls, *args):
+    def get_input_json_xml(cls, *args):
         if cls._is_valid_period(args[1]) and _is_valid_text(args[2]) and _is_valid_text(args[3]):
             return cls.get_input_batch(*args)
         else:
             print('\nLog: one of parameters failed validation, publishing was stopped')
             exit(1)
+
 
     @staticmethod
     def _is_valid_period(p_period):
@@ -254,6 +259,22 @@ def proceed():
     else:
         print('Incorrect input. Please try again.')
         proceed()
+
+
+def delete_file(p_path, p_file_name):
+    print('Log: start deleting input file..')
+    try:
+        os.remove(rf"{p_path}\\" + f"{p_file_name}")
+    except IOError:
+        print('EXCEPTION: failed to delete the file')
+    print('Log: input file has been deleted')
+
+
+def get_path():
+    input_path = input('Enter a path to file or leave it empty for default path:\n')
+    if not input_path:
+        input_path = default_file_path
+    return input_path
 
 
 def main():
