@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 import calendar
-import os
+import sys
+sys.path.append('D:\\Python_DQE\\Module10')
+import classDB
 
 type_dict = {'1': ('News', 'text', 'city', 'publish_date'),
              '2': ('PrivateAd', 'text', 'exp_date', 'days_left'),
@@ -8,7 +10,7 @@ type_dict = {'1': ('News', 'text', 'city', 'publish_date'),
 
 default_output_path = 'D:\\Python_DQE\\Module6\\files'
 output_file_name = 'newsfeed_input.txt'
-default_file_path = 'D:\\Python_DQE\\Module6\\files'
+
 
 class CreateObjectDynamic:
 
@@ -54,7 +56,7 @@ class CreateObjectDynamic:
         my_str2 = f"------------------------------\n"
         with open(rf"{default_output_path}\\" + output_file_name, "a+") as f:
             f.write(f"""{my_str1}\n{p_output}\n{my_str2}\n\n""")
-        print(f"Log: successfully published ({self.args[0]})!\n")
+        print(f"Log: successfully published to file ({self.args[0]})!")
 
 
 class CreateNews(CreateObjectDynamic):
@@ -71,7 +73,7 @@ class CreateNews(CreateObjectDynamic):
         p2_value = input(f"\nEnter {args[2]} for {args[0]}:")
         while not _is_valid_text(p2_value):
             p2_value = input(f"\nEnter {args[2]} for {args[0]}:")
-        print('\nLog: Calculating Publish Date...')
+        print('\nLog: calculating publish date...')
         p3_value = cls.calc_publish_date()
         return cls(args[0], p1_value, p2_value, p3_value)
 
@@ -90,7 +92,6 @@ class CreateNews(CreateObjectDynamic):
             print('\nLog: one of parameters is empty, publishing was stopped')
             exit(1)
 
-
     @staticmethod
     def calc_publish_date():
         now = datetime.now()
@@ -100,6 +101,9 @@ class CreateNews(CreateObjectDynamic):
         news_output = (
             f"""{self.args[1]}\n{self.args[2]}, {self.args[3]}""")
         return news_output
+
+    def prepare_output_db(self):
+        return self.args[1], self.args[2]
 
 
 class CreatePrivateAd(CreateObjectDynamic):
@@ -138,7 +142,6 @@ class CreatePrivateAd(CreateObjectDynamic):
             print('\nLog: one of parameters failed validation, publishing was stopped')
             exit(1)
 
-
     @staticmethod
     def calc_days_left(p_exp_date):
         today = datetime.today()
@@ -149,6 +152,9 @@ class CreatePrivateAd(CreateObjectDynamic):
         ad_output = (
             f"""{self.args[1]}\n{self.args[2]}, {self.args[3]}""")
         return ad_output
+
+    def prepare_output_db(self):
+        return self.args[1], self.args[2].split("Actual until: ", 1)[1]
 
 
 class CreateHoroscope(CreateObjectDynamic):
@@ -195,7 +201,6 @@ class CreateHoroscope(CreateObjectDynamic):
             print('\nLog: one of parameters failed validation, publishing was stopped')
             exit(1)
 
-
     @staticmethod
     def _is_valid_period(p_period):
         if not (p_period in ('daily', 'weekly', 'monthly')):
@@ -221,6 +226,9 @@ class CreateHoroscope(CreateObjectDynamic):
         horoscope_output = (
             f"""{self.args[2]} {self.args[1]} Horoscope\n{self.args[4]} - {self.args[5]}\n{self.args[3]}""")
         return horoscope_output
+
+    def prepare_output_db(self):
+        return self.args[1], self.args[2], self.args[3]
 
 
 def _is_valid_text(p_str):
@@ -261,20 +269,19 @@ def proceed():
         proceed()
 
 
-def delete_file(p_path, p_file_name):
-    print('Log: start deleting input file..')
-    try:
-        os.remove(rf"{p_path}\\" + f"{p_file_name}")
-    except IOError:
-        print('EXCEPTION: failed to delete the file')
-    print('Log: input file has been deleted')
-
-
-def get_path():
-    input_path = input('Enter a path to file or leave it empty for default path:\n')
-    if not input_path:
-        input_path = default_file_path
-    return input_path
+def publish_to_db(table_name, param_list):
+    my_connection = classDB.DBConnection('publishing.db')
+    my_connection.create_table('News', 'text text, city text')
+    my_connection.create_table('PrivateAd', 'text text, exp_date date')
+    my_connection.create_table('Horoscope', 'period text, zodiac_sign text, prediction text')
+    print(f'Log: inserting new row to table ({table_name})')
+    my_connection.insert_row(table_name, param_list)
+    my_connection.commit_changes()
+    print(f'Log: successfully published to sqlite ({table_name})\n')
+    print(f'{table_name} table content:')
+    my_connection.query_table(table_name)
+    print(f'\n')
+    my_connection.cursor.close()
 
 
 def main():
@@ -286,6 +293,9 @@ def main():
     lst_param = new_obj_d.show_start()
     new_obj = eval('Create' + new_obj_d.kwargs[new_obj_d.datatype][0]).get_input(*lst_param)
     new_obj.publish(new_obj.prepare_output())
+    # publish to sqlite
+    param_list_db = new_obj.prepare_output_db()
+    publish_to_db(new_obj_d.kwargs[new_obj_d.datatype][0], f"{param_list_db}")
     proceed()
 
 
