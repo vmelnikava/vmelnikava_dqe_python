@@ -7,17 +7,44 @@ sys.path.append('D:\\Python_DQE\\Module9')
 import os
 import json
 import xml.etree.ElementTree as ET
-import publishing_input as pi
 import functions as f
 import generate_csv
 import classBatch
 import classJson
 import classXml
+import classDynamicObject as d
+import classNews, classHoroscope, classPrivateAd
 
-batch_file_name = 'batch_input.txt'
 default_file_path = 'D:\\Python_DQE\\Module6\\files'
+batch_file_name = 'batch_input.txt'
 json_file_name = 'json_input.json'
 xml_file_name = 'xml_input.xml'
+
+type_dict = {'1': ('News', 'text', 'city', 'publish_date'),
+             '2': ('PrivateAd', 'text', 'exp_date', 'days_left'),
+             '3': ('Horoscope', 'period', 'zodiac sign', 'prediction', 'from_date', 'to_date')}
+
+
+def print_data_types():
+    print("Enter a number of data type you'd like to publish (press 0 to exit) :")
+    for key, value in type_dict.items():
+        print('\t', type_dict[key][0], f"""({key})""")
+
+
+def good_bye():
+    print('Good Bye..')
+    exit(0)
+
+
+def proceed():
+    question = input('\nWould you like to continue? Enter Y/N\n')
+    if question.upper() == 'Y':
+        main()
+    elif question.upper() == 'N':
+        pass
+    else:
+        print('Incorrect input. Please try again.')
+        proceed()
 
 
 def select_mode():
@@ -32,12 +59,12 @@ def select_mode():
 
 def normalize_file():
     print('\nLog: applying case normalization to newsfeed')
-    with open(rf"{pi.default_output_path}\\" + "newsfeed_input.txt", 'r') as file:
+    with open(rf"{d.default_output_path}\\" + "newsfeed_input.txt", 'r') as file:
         norm_data = f.normalize(file.read())
     norm_data = norm_data.replace('Privatead', 'PrivateAd')
-    with open(rf"{pi.default_output_path}\\" + "newsfeed_input.txt", 'w') as file:
+    with open(rf"{d.default_output_path}\\" + "newsfeed_input.txt", 'w') as file:
         file.write(norm_data)
-    print('Log: case normalization was successfully applied!\n')
+    print('Log: case normalization was successfully applied!')
 
 
 def get_path():
@@ -86,7 +113,7 @@ def search_xml(p_path, p_file_name):
 
 
 def delete_file(p_path, p_file_name):
-    print('Log: start deleting input file..')
+    print('\nLog: start deleting input file..')
     try:
         os.remove(rf"{p_path}\\" + f"{p_file_name}")
     except IOError:
@@ -97,7 +124,17 @@ def delete_file(p_path, p_file_name):
 def main():
     mode = select_mode()
     if mode == '1':
-        pi.main()
+        print_data_types()
+        new_obj_d = d.CreateObjectDynamic(**type_dict)
+        new_obj_d.get_object_type()
+        while not new_obj_d.validate_object_type():
+            new_obj_d.get_object_type()
+        lst_param = new_obj_d.show_start()
+        new_obj = eval('class' + new_obj_d.kwargs[new_obj_d.datatype][0] + '.create' +
+                       new_obj_d.kwargs[new_obj_d.datatype][0]).get_input(*lst_param)
+        new_obj.publish(new_obj.prepare_output())
+        param_list_db = new_obj.prepare_output_db()
+        new_obj.publish_to_db(f"{param_list_db}")
     elif mode == '2':
         batch_path = get_path()
         file_data = search_file(batch_path, batch_file_name)
@@ -120,13 +157,18 @@ def main():
         my_xml.parse_xml()
         delete_file(xml_path, xml_file_name)
     elif mode == '0':
-        pi.good_bye()
+        good_bye()
     else:
         print('ERROR: incorrect input (1,2,3 or 4 is expected)')
-        exit(0)
+        good_bye()
     normalize_file()
-    generate_csv.main(pi.default_output_path, pi.output_file_name)
-    pi.good_bye()
+    d.CreateObjectDynamic.query_db('News')
+    d.CreateObjectDynamic.query_db('PrivateAd')
+    d.CreateObjectDynamic.query_db('Horoscope')
+    generate_csv.main(d.default_output_path, d.output_file_name)
+    d.CreateObjectDynamic.find_duplicates()
+    proceed()
+    good_bye()
 
 
 main()
