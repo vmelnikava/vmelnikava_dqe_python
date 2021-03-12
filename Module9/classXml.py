@@ -1,10 +1,12 @@
 import sys
 sys.path.append('D:\\Python_DQE\\Module5')
-import publishing_input as pi
+import classNews, classPrivateAd, classHoroscope
+
 
 dict_xml_format = {'News': ('city', 'text'),
                    'PrivateAd': ('text', 'expiration_date'),
                    'Horoscope': ('period', 'zodiac_sign', 'prediction')}
+
 
 class processXml:
     def __init__(self, p_input_data):
@@ -18,7 +20,7 @@ class processXml:
                 exit(1)
 
     def validate_object_params(self):
-        print('Log: validating object parameters...\n')
+        print('Log: validating object parameters...')
         root = self.xml_data.getroot()
         for child in root:
             list_of_expected_params = dict_xml_format.get(child.tag)
@@ -30,6 +32,14 @@ class processXml:
                 if item.tag not in dict_xml_format.keys() and item.tag not in list_of_expected_params:
                     print('EXCEPTION: failed to parse, invalid parameter names given for', child.tag, '-', item.tag)
                     exit(1)
+
+    @staticmethod
+    def publish_xml_record(list_args):
+        print(f'\nLog: (XML) start processing row {list_args}')
+        new_obj = eval('class' + list_args[0] + '.create' + list_args[0]).get_input_json_xml(*list_args)
+        new_obj.publish(new_obj.prepare_output())
+        param_list_db = new_obj.prepare_output_db()
+        new_obj.publish_to_db(f"{param_list_db}")
 
     def parse_xml(self):
         self.validate_object_type()
@@ -43,8 +53,4 @@ class processXml:
                 else:
                     list_args.append(item.text)
             list_args = tuple(list_args)
-            print(f'Log: (XML) start creating object with parameters {list_args}')
-            new_obj = eval('pi.' + 'Create' + list_args[0]).get_input_json_xml(*list_args)
-            new_obj.publish(new_obj.prepare_output())
-            param_list_db = new_obj.prepare_output_db()
-            pi.publish_to_db(list_args[0], f"{param_list_db}")
+            self.publish_xml_record(list_args)
