@@ -1,5 +1,7 @@
 import sqlite3
 
+sqlitedb_path = 'D:\\Python_DQE\\Module10'
+
 
 class DBConnection:
     def __init__(self, database_name):
